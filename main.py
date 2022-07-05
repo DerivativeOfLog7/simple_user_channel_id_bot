@@ -1,9 +1,12 @@
 import logging
+
+import telegram
 from telegram import Update, Chat, constants, error
 from telegram.ext import ApplicationBuilder, CallbackContext, CommandHandler, MessageHandler, filters, ChatMemberHandler
 import config.SECRETS
 
 TOKEN = config.SECRETS.TOKEN
+OWNER_ID = config.SECRETS.OWNER_ID
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -28,10 +31,17 @@ async def generic_message(update: Update, context: CallbackContext):
             pass
 
 
+async def kill(update: Update, context: CallbackContext):
+    if update.effective_user.id == OWNER_ID and update.effective_chat.type == telegram.Chat.PRIVATE:
+        await update.effective_chat.send_message(text=f"Killing bot")
+        exit()
+
+
 def main():
     application = ApplicationBuilder().token(config.SECRETS.TOKEN).build()
 
     handlers = {0: [CommandHandler('start', start),
+                    CommandHandler('kill', kill),
                     ChatMemberHandler(generic_message)
                     ]}
     application.add_handlers(handlers)
