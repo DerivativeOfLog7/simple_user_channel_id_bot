@@ -23,6 +23,7 @@ async def generic_message(update: Update, context: CallbackContext):
             await update.effective_chat.send_message(text=f"Channel chat ID: <code>{update.effective_chat.id}</code>",
                                                      parse_mode=constants.ParseMode.HTML)
             await update.effective_chat.leave()
+        # Yes this is indeed the laziest way possible I could prevent the bot throwing an error when leaving a channel!
         except error.Forbidden:
             pass
 
